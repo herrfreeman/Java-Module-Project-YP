@@ -1,37 +1,50 @@
+import java.util.ArrayList;
+import java.util.Locale;
+
 public class Calculator {
     int guestCount;
-    String goods;
-    float totalCost;
+    ArrayList<Product> goods;
+
     Calculator(int guestCountInit) {
         this.guestCount = guestCountInit;
-        this.goods = "";
-        this.totalCost = 0.0f;
+        this.goods = new ArrayList<Product>();
     }
 
-    public void addProduct(String productName, float productCost) {
-
-        this.goods += String.format("\n %s : ",productName) + String.format("%.2f",productCost).replace(",",".");
-        this.totalCost += productCost;
+    public void addProduct(Product product) {
+        goods.add(product);
     }
 
+    public static String getCurrencyName(float qty) {
+        //int last2Digitst = ((int)Math.floor(qty))%100;
+        int last2Digitst = (int)qty%100;
+
+        if  (last2Digitst >= 11 && last2Digitst <= 19 ) {
+            return "рублей";
+        } else {
+
+            int lastDigit = (int) qty % 10;
+            if (lastDigit == 1) {
+                return "рубль";
+            } else if (lastDigit >= 2 && lastDigit <= 4) {
+                return "рубля";
+            } else {
+                return "рублей";
+            }
+        }
+    }
     public void showTotal() {
 
-        float costPerMan = this.totalCost/this.guestCount;
-        int lastDigit = (int)costPerMan%10;
-        String currencyName;
-        if (lastDigit == 1) {
-            currencyName = "рубль";
-        } else if (lastDigit >= 2 && lastDigit <= 4) {
-            currencyName = "рубля";
-        } else {
-            currencyName = "рублей";
+        System.out.println("Добавленные товары:");
+        float totalCost = 0f;
+        for (Product item : this.goods) {
+            System.out.printf(Locale.US," - %s %.2f%n", item.name, item.cost);
+            totalCost += item.cost;
         }
 
-        System.out.println("Добавленные товары: " + this.goods);
-        System.out.println(String.format("Итого: %.2f",this.totalCost).replace(",","."));
-        System.out.println("Гостей: " + this.guestCount);
-        System.out.println(String.format("Сумма на каждого гостя: %.2f %s", costPerMan, currencyName).replace(",","."));
+        float costPerMan = totalCost/this.guestCount;
+        String currencyName = getCurrencyName(costPerMan);
 
+        System.out.printf(Locale.US,"Итого: %.2f \nГостей: %d \nСумма на каждого гостя: %.2f %s", totalCost, this.guestCount, costPerMan, currencyName);
     }
 
 }
